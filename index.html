@@ -1,20 +1,81 @@
 <!DOCTYPE HTML>
 <html>
     <head>
-        <title>Bela Saves Coffee</title>
+        <title>Lelkes Barista</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
         <link rel="stylesheet" href="assets/css/main.css" />
         <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 
         <style>
-            /* --- KÉNYSZERÍTETT RÉTEGREND --- */
-            #main {
-                position: relative;
-                z-index: 999 !important;
+            /* --- 0. RESET --- */
+            html, body {
+                height: 100%;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                overflow: hidden; /* Stops scrolling */
             }
 
-            /* --- 1. PROFILKÉP (AVATAR) --- */
+            /* --- 1. BACKGROUND (FIXED & CENTERED) --- */
+            #bg {
+                position: fixed !important;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background-image: url('assets/css/images/bg.jpg');
+                background-size: cover !important;
+                background-position: center center !important;
+                background-repeat: no-repeat;
+                z-index: 0;
+                /* Animation Setup */
+                animation: floatBackground 40s infinite ease-in-out;
+                will-change: transform;
+                transform-origin: center center !important; 
+            }
+
+            @keyframes floatBackground {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.2); }
+                100% { transform: scale(1); }
+            }
+
+            /* --- 2. OVERLAY --- */
+            #overlay {
+                position: fixed !important; 
+                top: 0;
+                left: 0;
+                width: 100vw; 
+                height: 100vh; 
+                z-index: 1;
+                pointer-events: none; 
+                background-color: rgba(0, 0, 0, 0.3); 
+                /* Relies on main.css for the image path */
+            }
+
+            /* --- 3. WRAPPER (CENTERING CONTENT) --- */
+            #wrapper {
+                position: relative;
+                z-index: 2;
+                height: 100%;
+                width: 100%;
+                display: flex; 
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+            }
+
+            #main {
+                position: relative;
+                z-index: 10;
+                width: 90%;
+                max-width: 600px;
+                padding: 2em;
+            }
+
+            /* --- 4. AVATAR --- */
             .avatar {
                 display: block;
                 margin: 0 auto 2em auto;
@@ -24,45 +85,22 @@
                 overflow: hidden;
                 border: 3px solid rgba(255, 255, 255, 0.5);
                 box-shadow: 0 0 15px rgba(0,0,0,0.3);
-                position: relative;
             }
 
             .avatar img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                transform: scale(1.0); 
-                transform-origin: center center; 
             }
 
-            /* --- 2. HÁTTÉR ANIMÁCIÓ --- */
-            @keyframes floatBackground {
-                0% { transform: scale(1); }
-                50% { transform: scale(1.2); }
-                100% { transform: scale(1); }
-            }
-
-            #bg {
-                background-image: url('assets/css/images/bg.jpg');
-                background-size: cover;
-                background-position: center center;
-                animation: floatBackground 40s infinite ease-in-out !important;
-                will-change: transform;
-                z-index: 0; 
-            }
-
-            #overlay {
-                opacity: 0.4; 
-                z-index: 1;
-            }
-
-            /* --- 3. ŰRLAP ÉS GOMBOK --- */
+            /* --- 5. FORM & BUTTONS --- */
             form {
                 margin-top: 1.5em;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                gap: 10px;
+                gap: 15px;
+                width: 100%;
             }
             
             input[type="email"] {
@@ -73,11 +111,12 @@
                 color: #ffffff; 
                 display: block;
                 outline: 0;
-                padding: 0.75em 1.5em;
+                padding: 0 1.5em;
                 text-decoration: none;
                 width: 100%;
-                max-width: 320px;
-                font-size: 0.9em;
+                height: 3em;
+                line-height: 3em;
+                font-size: 1em;
                 transition: background 0.2s;
             }
 
@@ -93,7 +132,7 @@
 
             button {
                 appearance: none;
-                transition: all 0.3s ease-in-out; /* Simább átmenet a színváltáshoz */
+                transition: all 0.3s ease-in-out;
                 background-color: #ffffff;
                 border-radius: 2em;
                 border: 0;
@@ -107,37 +146,66 @@
                 text-align: center;
                 text-decoration: none;
                 white-space: nowrap;
+                width: auto;
+                min-width: 150px;
             }
 
             button:hover {
                 background-color: rgba(255, 255, 255, 0.9);
+                transform: translateY(-2px);
             }
             
-            /* Stílus a sikeres küldéshez (zöld gomb) */
             button.success {
-                background-color: #4CAF50 !important; /* Zöld szín */
+                background-color: #4CAF50 !important;
                 color: white !important;
-                pointer-events: none; /* Ne lehessen újra kattintani */
+                pointer-events: none;
             }
 
             button.error {
-                background-color: #ff4444 !important; /* Piros szín hiba esetén */
+                background-color: #ff4444 !important;
                 color: white !important;
             }
 
-            /* --- 4. TYPOGRAPHY --- */
-            h1 { font-size: 2.5em !important; margin-bottom: 0.2em !important; letter-spacing: 0.1em; position: relative; z-index: 10; }
-            h2 { font-size: 1.2em; margin-bottom: 1em; opacity: 0.8; font-weight: 300; position: relative; z-index: 10; }
-            p.info { font-size: 0.9em; opacity: 0.6; margin-bottom: 0.5em; position: relative; z-index: 10; }
+            /* --- 6. TYPOGRAPHY --- */
+            h1 { 
+                font-size: clamp(1.8em, 5vw, 2.5em) !important;
+                margin-bottom: 0.2em !important; 
+                letter-spacing: 0.1em; 
+                color: white;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            }
+            h2 { 
+                font-size: clamp(1em, 3vw, 1.2em); 
+                margin-bottom: 1em; 
+                opacity: 0.9; 
+                font-weight: 300; 
+                color: white;
+            }
+            p.info { 
+                font-size: 0.9em; 
+                opacity: 0.8; 
+                margin-bottom: 0.5em; 
+                color: white;
+            }
+            p#my-form-status {
+                margin-top: 1em;
+                color: white;
+                font-weight: bold;
+                text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            }
 
-            @media screen and (max-width: 480px) {
-                h1 { font-size: 1.8em !important; }
-                h2 { font-size: 1em; }
+            #footer {
+                margin-top: 2em;
+                font-size: 0.8em;
+                opacity: 0.5;
+                color: white;
             }
         </style>
     </head>
     <body class="is-preload">
+        
         <div id="wrapper">
+            
             <div id="bg"></div>
             <div id="overlay"></div>
             
@@ -149,7 +217,7 @@
                         <img src="images/avatar.jpg" alt="" />
                     </span>
 
-                    <h1>Bela Saves Coffee</h1>
+                    <h1>Lelkes Barista</h1>
                     <h2>A tökéletes kávéélményhez vezető úton</h2>
                     <p class="info">Keress bizalommal</p>
 
@@ -163,55 +231,51 @@
                 </header>
 
                 <footer id="footer">
-                    <span class="copyright">&copy; Bela Saves Coffee</span>
+                    <span class="copyright">&copy; Lelkes Barista</span>
                 </footer>
 
             </div>
         </div>
         
         <script>
-            // Betöltő animáció (eredeti)
             window.onload = function() { document.body.classList.remove('is-preload'); }
             window.ontouchmove = function() { return false; }
             window.onorientationchange = function() { document.body.scrollTop = 0; }
 
-            // --- ÚJ RÉSZ: AJAX KÜLDÉS ---
             var form = document.getElementById("contact-form");
             var button = document.getElementById("submit-btn");
+            var statusTxt = document.getElementById("my-form-status");
             
             async function handleSubmit(event) {
-                event.preventDefault(); // Ez akadályozza meg, hogy elnavigáljon az oldalról
-                
+                event.preventDefault();
                 var data = new FormData(event.target);
                 
-                // Gomb átírása amíg tölt
                 button.innerHTML = "Küldés..."; 
                 
                 fetch(event.target.action, {
                     method: form.method,
                     body: data,
-                    headers: {
-                        'Accept': 'application/json'
-                    }
+                    headers: { 'Accept': 'application/json' }
                 }).then(response => {
                     if (response.ok) {
-                        // SIKER!
-                        button.innerHTML = "Köszönöm! Hamarosan keresem.";
-                        button.classList.add("success"); // Zölddé tesszük
-                        form.reset(); // Töröljük a mezőt
+                        button.innerHTML = "Küldve!";
+                        button.classList.add("success");
+                        statusTxt.innerHTML = "Köszönöm! Hamarosan keresem.";
+                        form.reset();
                     } else {
-                        // HIBA!
                         response.json().then(data => {
                             if (Object.hasOwn(data, 'errors')) {
-                                button.innerHTML = "Hiba: " + data["errors"].map(error => error["message"]).join(", ");
+                                statusTxt.innerHTML = data["errors"].map(error => error["message"]).join(", ");
                             } else {
-                                button.innerHTML = "Hiba történt a küldéskor.";
+                                statusTxt.innerHTML = "Hiba történt a küldéskor.";
                             }
-                            button.classList.add("error"); // Pirossá tesszük
+                            button.innerHTML = "Hiba";
+                            button.classList.add("error");
                         })
                     }
                 }).catch(error => {
-                    button.innerHTML = "Hálózati hiba.";
+                    statusTxt.innerHTML = "Hálózati hiba.";
+                    button.innerHTML = "Hiba";
                     button.classList.add("error");
                 });
             }
