@@ -1,118 +1,138 @@
 <!DOCTYPE HTML>
-<html lang="hu">
+<html>
     <head>
-        <title>Lelkes Barista</title>
+        <title>Bela Saves Coffee</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
         <link rel="stylesheet" href="assets/css/main.css" />
         <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 
         <style>
-            /* --- HÁTTÉR ÉS ANIMÁCIÓ FIXÁLÁSA --- */
-            
-            /* Ez a réteg felel a képért */
-            #bg {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-image: url('assets/css/images/bg.jpg');
-                background-size: cover;
-                background-position: center !important;
-                background-repeat: no-repeat;
-                z-index: -2;
-                transform: scale(1);
-                will-change: transform;
-            }
-
-            /* Ez a réteg hozza vissza a "kis csíkokat" (pattern) */
-            #overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                /* Az eredeti rácsháló effekt: */
-                background-image: url('assets/css/images/overlay.png'), url('assets/css/images/overlay.png');
-                background-color: rgba(0, 0, 0, 0.3);
-                z-index: -1;
-            }
-
-            /* Lebegő animáció - csak ha már betöltött */
-            body:not(.is-preload) #bg {
-                animation: floatBackground 50s infinite ease-in-out;
-            }
-
-            @keyframes floatBackground {
-                0% { transform: scale(1); }
-                50% { transform: scale(1.1); } 
-                100% { transform: scale(1); }
-            }
-
-            /* --- EGYÉB STÍLUSOK (Hogy minden ott legyen, ahol kell) --- */
-            #wrapper {
-                height: 100vh;
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
+            /* --- KÉNYSZERÍTETT RÉTEGREND --- */
+            #main {
                 position: relative;
-                z-index: 1;
+                z-index: 999 !important;
             }
 
+            /* --- 1. PROFILKÉP (AVATAR) --- */
             .avatar {
                 display: block;
-                margin: 0 auto 1.5em auto;
-                width: 150px;
-                height: 150px;
+                margin: 0 auto 2em auto;
+                width: clamp(100px, 18vw, 160px);
+                height: clamp(100px, 18vw, 160px);
                 border-radius: 50%;
                 overflow: hidden;
                 border: 3px solid rgba(255, 255, 255, 0.5);
-                box-shadow: 0 0 20px rgba(0,0,0,0.5);
+                box-shadow: 0 0 15px rgba(0,0,0,0.3);
+                position: relative;
             }
 
             .avatar img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
+                transform: scale(1.0); 
+                transform-origin: center center; 
             }
 
-            h1 { font-size: 2.5em; color: #fff; margin: 0; letter-spacing: 2px; }
-            h2 { font-size: 1.2em; color: rgba(255,255,255,0.8); font-weight: 300; margin-top: 0.5em; }
+            /* --- 2. HÁTTÉR ANIMÁCIÓ --- */
+            @keyframes floatBackground {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.2); }
+                100% { transform: scale(1); }
+            }
 
-            form { margin-top: 2em; }
+            #bg {
+                background-image: url('assets/css/images/bg.jpg');
+                background-size: cover;
+                background-position: center center;
+                animation: floatBackground 40s infinite ease-in-out !important;
+                will-change: transform;
+                z-index: 0; 
+            }
+
+            #overlay {
+                opacity: 0.4; 
+                z-index: 1;
+            }
+
+            /* --- 3. ŰRLAP ÉS GOMBOK --- */
+            form {
+                margin-top: 1.5em;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
             input[type="email"] {
+                appearance: none;
                 background: rgba(255, 255, 255, 0.15);
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                border-radius: 40px;
-                color: #fff;
-                padding: 12px 25px;
-                width: 280px;
-                text-align: center;
-                outline: none;
-                transition: background 0.3s;
+                border: solid 1px rgba(255, 255, 255, 0.3);
+                border-radius: 2em;
+                color: #ffffff; 
+                display: block;
+                outline: 0;
+                padding: 0.75em 1.5em;
+                text-decoration: none;
+                width: 100%;
+                max-width: 320px;
+                font-size: 0.9em;
+                transition: background 0.2s;
             }
-            input[type="email"]:focus { background: rgba(255, 255, 255, 0.25); }
+
+            ::placeholder {
+                color: rgba(255, 255, 255, 0.8) !important;
+                opacity: 1;
+            }
+
+            input[type="email"]:focus {
+                background: rgba(255, 255, 255, 0.25);
+                border-color: #ffffff;
+            }
 
             button {
-                background: #fff;
-                border: none;
-                border-radius: 40px;
-                padding: 12px 40px;
-                font-weight: 700;
-                margin-top: 15px;
+                appearance: none;
+                transition: all 0.3s ease-in-out; /* Simább átmenet a színváltáshoz */
+                background-color: #ffffff;
+                border-radius: 2em;
+                border: 0;
+                color: #444;
                 cursor: pointer;
-                transition: transform 0.2s;
+                display: inline-block;
+                font-weight: 700;
+                height: 3em;
+                line-height: 3em;
+                padding: 0 2em;
+                text-align: center;
+                text-decoration: none;
+                white-space: nowrap;
             }
-            button:hover { transform: scale(1.05); }
 
-            /* Mobilos finomhangolás */
+            button:hover {
+                background-color: rgba(255, 255, 255, 0.9);
+            }
+            
+            /* Stílus a sikeres küldéshez (zöld gomb) */
+            button.success {
+                background-color: #4CAF50 !important; /* Zöld szín */
+                color: white !important;
+                pointer-events: none; /* Ne lehessen újra kattintani */
+            }
+
+            button.error {
+                background-color: #ff4444 !important; /* Piros szín hiba esetén */
+                color: white !important;
+            }
+
+            /* --- 4. TYPOGRAPHY --- */
+            h1 { font-size: 2.5em !important; margin-bottom: 0.2em !important; letter-spacing: 0.1em; position: relative; z-index: 10; }
+            h2 { font-size: 1.2em; margin-bottom: 1em; opacity: 0.8; font-weight: 300; position: relative; z-index: 10; }
+            p.info { font-size: 0.9em; opacity: 0.6; margin-bottom: 0.5em; position: relative; z-index: 10; }
+
             @media screen and (max-width: 480px) {
-                #bg { animation: none !important; } /* Mobilon tiltsd le a zoomot, hogy ne legyen akadozás */
-                h1 { font-size: 1.8em; }
-                input[type="email"] { width: 220px; }
+                h1 { font-size: 1.8em !important; }
+                h2 { font-size: 1em; }
             }
         </style>
     </head>
@@ -122,53 +142,81 @@
             <div id="overlay"></div>
             
             <div id="main">
+
                 <header id="header">
-                    <span class="avatar"><img src="images/avatar.jpg" alt="Barista" /></span>
-                    <h1>Lelkes Barista</h1>
+                    
+                    <span class="avatar">
+                        <img src="images/avatar.jpg" alt="" />
+                    </span>
+
+                    <h1>Bela Saves Coffee</h1>
                     <h2>A tökéletes kávéélményhez vezető úton</h2>
-                    <p style="color: rgba(255,255,255,0.6); margin-top: 1em;">Keress bizalommal</p>
+                    <p class="info">Keress bizalommal</p>
 
                     <form id="contact-form" action="https://formspree.io/f/xzdvwlwz" method="POST">
                         <input type="email" name="email" placeholder="Írd ide az email címed..." required>
-                        <br>
                         <button id="submit-btn" type="submit">Küldés</button>
                     </form>
+                    
+                    <p id="my-form-status"></p>
+
                 </header>
 
-                <footer id="footer" style="margin-top: 3em; color: rgba(255,255,255,0.3); font-size: 0.8em;">
-                    &copy; Lelkes Barista
+                <footer id="footer">
+                    <span class="copyright">&copy; Bela Saves Coffee</span>
                 </footer>
+
             </div>
         </div>
         
         <script>
-            // Betöltés után levevődik a preload osztály, elindul az animáció
-            window.addEventListener('load', function() {
-                setTimeout(function() {
-                    document.body.classList.remove('is-preload');
-                }, 100);
-            });
+            // Betöltő animáció (eredeti)
+            window.onload = function() { document.body.classList.remove('is-preload'); }
+            window.ontouchmove = function() { return false; }
+            window.onorientationchange = function() { document.body.scrollTop = 0; }
 
-            // Form kezelő
+            // --- ÚJ RÉSZ: AJAX KÜLDÉS ---
             var form = document.getElementById("contact-form");
-            form.addEventListener("submit", function(event) {
-                event.preventDefault();
-                var button = document.getElementById("submit-btn");
-                button.innerHTML = "Küldés...";
+            var button = document.getElementById("submit-btn");
+            
+            async function handleSubmit(event) {
+                event.preventDefault(); // Ez akadályozza meg, hogy elnavigáljon az oldalról
+                
+                var data = new FormData(event.target);
+                
+                // Gomb átírása amíg tölt
+                button.innerHTML = "Küldés..."; 
                 
                 fetch(event.target.action, {
                     method: form.method,
-                    body: new FormData(event.target),
-                    headers: { 'Accept': 'application/json' }
+                    body: data,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
                 }).then(response => {
                     if (response.ok) {
-                        button.innerHTML = "Köszönöm!";
-                        button.style.background = "#4CAF50";
-                        button.style.color = "#fff";
-                        form.reset();
+                        // SIKER!
+                        button.innerHTML = "Köszönöm! Hamarosan keresem.";
+                        button.classList.add("success"); // Zölddé tesszük
+                        form.reset(); // Töröljük a mezőt
+                    } else {
+                        // HIBA!
+                        response.json().then(data => {
+                            if (Object.hasOwn(data, 'errors')) {
+                                button.innerHTML = "Hiba: " + data["errors"].map(error => error["message"]).join(", ");
+                            } else {
+                                button.innerHTML = "Hiba történt a küldéskor.";
+                            }
+                            button.classList.add("error"); // Pirossá tesszük
+                        })
                     }
+                }).catch(error => {
+                    button.innerHTML = "Hálózati hiba.";
+                    button.classList.add("error");
                 });
-            });
+            }
+            
+            form.addEventListener("submit", handleSubmit);
         </script>
     </body>
 </html>
