@@ -8,59 +8,15 @@
         <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 
         <style>
-            /* Alapértelmezett beállítások a nem kívánt görgetés ellen */
-            body, html {
+            /* Alapbeállítások, hogy ne legyen fehér villanás */
+            html, body {
+                height: 100%;
                 margin: 0;
                 padding: 0;
-                width: 100%;
-                height: 100%;
-                overflow: hidden;
+                background-color: #000;
             }
 
-            #wrapper {
-                width: 100%;
-                height: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            /* --- KÉNYSZERÍTETT RÉTEGREND --- */
-            #main {
-                position: relative;
-                z-index: 999 !important;
-                text-align: center;
-                width: 100%;
-                padding: 20px;
-            }
-
-            /* --- 1. PROFILKÉP (AVATAR) --- */
-            .avatar {
-                display: block;
-                margin: 0 auto 2em auto;
-                width: clamp(100px, 18vw, 160px);
-                height: clamp(100px, 18vw, 160px);
-                border-radius: 50%;
-                overflow: hidden;
-                border: 3px solid rgba(255, 255, 255, 0.5);
-                box-shadow: 0 0 15px rgba(0,0,0,0.3);
-                position: relative;
-            }
-
-            .avatar img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                display: block;
-            }
-
-            /* --- 2. HÁTTÉR JAVÍTÁSA --- */
-            @keyframes floatBackground {
-                0% { transform: scale(1); }
-                50% { transform: scale(1.08); } 
-                100% { transform: scale(1); }
-            }
-
+            /* --- HÁTTÉR FIXÁLÁSA --- */
             #bg {
                 position: fixed;
                 top: 0;
@@ -71,12 +27,20 @@
                 background-size: cover;
                 background-position: center !important;
                 background-repeat: no-repeat;
-                
-                /* Az animáció most már a középpontból zoomol */
-                animation: floatBackground 50s infinite ease-in-out !important;
-                transform-origin: center center;
+                z-index: -2; /* Minden mögé */
                 will-change: transform;
-                z-index: 0; 
+                transform: scale(1);
+            }
+
+            /* Animáció csak akkor, ha nincs betöltési fázis */
+            body:not(.is-preload) #bg {
+                animation: floatBackground 50s infinite ease-in-out;
+            }
+
+            @keyframes floatBackground {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.1); } 
+                100% { transform: scale(1); }
             }
 
             #overlay {
@@ -85,103 +49,77 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: #000;
-                opacity: 0.4; 
+                background: rgba(0, 0, 0, 0.4);
+                z-index: -1; /* A kép fölé, de a tartalom alá */
+            }
+
+            /* --- TARTALOM --- */
+            #wrapper {
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
                 z-index: 1;
             }
 
-            /* --- 3. ŰRLAP ÉS GOMBOK --- */
-            form {
-                margin-top: 1.5em;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
-                position: relative; 
-                z-index: 10;
+            #main {
+                text-align: center;
+                padding: 2em;
+                max-width: 100%;
             }
-            
-            input[type="email"] {
-                appearance: none;
-                background: rgba(255, 255, 255, 0.15);
-                border: solid 1px rgba(255, 255, 255, 0.3);
-                border-radius: 2em;
-                color: #ffffff; 
+
+            /* --- AVATAR ÉS STÍLUSOK --- */
+            .avatar {
                 display: block;
-                outline: 0;
-                padding: 0.75em 1.5em;
-                text-decoration: none;
+                margin: 0 auto 2em auto;
+                width: 150px;
+                height: 150px;
+                border-radius: 50%;
+                overflow: hidden;
+                border: 3px solid rgba(255, 255, 255, 0.5);
+            }
+
+            .avatar img {
                 width: 100%;
-                max-width: 320px;
-                font-size: 0.9em;
-                transition: background 0.2s;
+                height: 100%;
+                object-fit: cover;
             }
 
-            ::placeholder {
-                color: rgba(255, 255, 255, 0.8) !important;
-                opacity: 1;
+            h1 { color: #fff; font-size: 2.5em; margin: 0; }
+            h2 { color: rgba(255,255,255,0.8); font-weight: 300; }
+
+            /* --- FORM --- */
+            form {
+                margin-top: 2em;
             }
 
-            input[type="email"]:focus {
-                background: rgba(255, 255, 255, 0.25);
-                border-color: #ffffff;
+            input[type="email"] {
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                border-radius: 30px;
+                color: #fff;
+                padding: 10px 20px;
+                width: 250px;
+                outline: none;
             }
 
             button {
-                appearance: none;
-                transition: all 0.3s ease-in-out; 
-                background-color: #ffffff;
-                border-radius: 2em;
-                border: 0;
-                color: #444;
+                background: #fff;
+                border: none;
+                border-radius: 30px;
+                padding: 10px 30px;
+                font-weight: bold;
                 cursor: pointer;
-                display: inline-block;
-                font-weight: 700;
-                height: 3em;
-                line-height: 3em;
-                padding: 0 2em;
-                text-align: center;
-                text-decoration: none;
-                white-space: nowrap;
+                margin-top: 10px;
             }
 
-            button:hover {
-                background-color: rgba(255, 255, 255, 0.9);
-                transform: translateY(-2px);
-            }
-            
-            button.success {
-                background-color: #4CAF50 !important; 
-                color: white !important;
-                pointer-events: none; 
-            }
-
-            button.error {
-                background-color: #ff4444 !important; 
-                color: white !important;
-            }
-
-            /* --- 4. TYPOGRAPHY --- */
-            h1 { font-size: 2.5em !important; margin-bottom: 0.2em !important; letter-spacing: 0.1em; position: relative; z-index: 10; color: #fff; }
-            h2 { font-size: 1.2em; margin-bottom: 1em; opacity: 0.8; font-weight: 300; position: relative; z-index: 10; color: #fff; }
-            p.info { font-size: 0.9em; opacity: 0.6; margin-bottom: 0.5em; position: relative; z-index: 10; color: #fff; }
-
-            /* Mobilos beállítások */
+            /* Mobilos fix: ne zoomoljon, ne másszon el */
             @media screen and (max-width: 480px) {
                 #bg {
-                    animation: none !important; 
-                    background-position: center !important;
+                    animation: none !important;
+                    background-attachment: scroll !important;
                 }
-                h1 { font-size: 1.8em !important; }
-                h2 { font-size: 1em; }
-            }
-
-            #footer {
-                position: relative;
-                z-index: 10;
-                margin-top: 2em;
-                color: rgba(255,255,255,0.5);
-                font-size: 0.8em;
             }
         </style>
     </head>
@@ -192,68 +130,50 @@
             
             <div id="main">
                 <header id="header">
-                    <span class="avatar">
-                        <img src="images/avatar.jpg" alt="Avatar" />
-                    </span>
-
+                    <span class="avatar"><img src="images/avatar.jpg" alt="" /></span>
                     <h1>Lelkes Barista</h1>
                     <h2>A tökéletes kávéélményhez vezető úton</h2>
-                    <p class="info">Keress bizalommal</p>
+                    <p style="color: rgba(255,255,255,0.6);">Keress bizalommal</p>
 
                     <form id="contact-form" action="https://formspree.io/f/xzdvwlwz" method="POST">
-                        <input type="email" name="email" placeholder="Írd ide az email címed..." required>
+                        <input type="email" name="email" placeholder="Email címed..." required>
+                        <br>
                         <button id="submit-btn" type="submit">Küldés</button>
                     </form>
-                    
-                    <p id="my-form-status"></p>
                 </header>
 
-                <footer id="footer">
-                    <span class="copyright">&copy; Lelkes Barista</span>
+                <footer id="footer" style="margin-top: 2em; color: rgba(255,255,255,0.4);">
+                    &copy; Lelkes Barista
                 </footer>
             </div>
         </div>
         
         <script>
-            // Betöltő animáció kezelése
-            window.onload = function() { 
-                document.body.classList.remove('is-preload'); 
-            }
+            // Amint betölt az oldal, levesszük a preloadot, így indul az animáció
+            window.addEventListener('load', function() {
+                document.body.classList.remove('is-preload');
+            });
 
-            // --- AJAX KÜLDÉS ---
+            // Form küldés (eredeti scripted rövidítve a lényegre)
             var form = document.getElementById("contact-form");
-            var button = document.getElementById("submit-btn");
-            
-            async function handleSubmit(event) {
-                event.preventDefault(); 
+            form.addEventListener("submit", async function(event) {
+                event.preventDefault();
+                var button = document.getElementById("submit-btn");
+                button.innerHTML = "Küldés...";
                 var data = new FormData(event.target);
-                
-                button.innerHTML = "Küldés..."; 
-                
                 fetch(event.target.action, {
                     method: form.method,
                     body: data,
-                    headers: {
-                        'Accept': 'application/json'
-                    }
+                    headers: { 'Accept': 'application/json' }
                 }).then(response => {
                     if (response.ok) {
-                        button.innerHTML = "Köszönöm! Hamarosan keresem.";
-                        button.classList.add("success"); 
-                        form.reset(); 
-                    } else {
-                        response.json().then(data => {
-                            button.innerHTML = "Hiba történt.";
-                            button.classList.add("error"); 
-                        })
+                        button.innerHTML = "Köszönöm!";
+                        button.style.backgroundColor = "#4CAF50";
+                        button.style.color = "#fff";
+                        form.reset();
                     }
-                }).catch(error => {
-                    button.innerHTML = "Hálózati hiba.";
-                    button.classList.add("error");
                 });
-            }
-            
-            form.addEventListener("submit", handleSubmit);
+            });
         </script>
     </body>
 </html>
