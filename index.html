@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="hu">
     <head>
         <title>Lelkes Barista</title>
         <meta charset="utf-8" />
@@ -8,10 +8,30 @@
         <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 
         <style>
+            /* Alapértelmezett beállítások a nem kívánt görgetés ellen */
+            body, html {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+            }
+
+            #wrapper {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
             /* --- KÉNYSZERÍTETT RÉTEGREND --- */
             #main {
                 position: relative;
                 z-index: 999 !important;
+                text-align: center;
+                width: 100%;
+                padding: 20px;
             }
 
             /* --- 1. PROFILKÉP (AVATAR) --- */
@@ -31,47 +51,41 @@
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                transform: scale(1.0); 
-                transform-origin: center center; 
+                display: block;
             }
 
-            /* --- 2. HÁTTÉR ANIMÁCIÓ --- */
+            /* --- 2. HÁTTÉR JAVÍTÁSA --- */
             @keyframes floatBackground {
                 0% { transform: scale(1); }
-                50% { transform: scale(1.05); } 
+                50% { transform: scale(1.08); } 
                 100% { transform: scale(1); }
             }
 
             #bg {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
                 background-image: url('assets/css/images/bg.jpg');
-                
-                /* Fontos: Kitölti a képernyőt */
                 background-size: cover;
+                background-position: center !important;
+                background-repeat: no-repeat;
                 
-                /* --- A JAVÍTÁS: 100% JOBBRA --- */
-                /* Kivettem a 'fixed'-et, és 100%-ra (teljesen jobbra) toltam */
-                background-position: 100% center !important;
-                
-                /* Ez a sor okozta a hibát mobilon, TÖRÖLTEM: */
-                /* background-attachment: fixed; */
-                
-                animation: floatBackground 60s infinite ease-in-out !important;
+                /* Az animáció most már a középpontból zoomol */
+                animation: floatBackground 50s infinite ease-in-out !important;
+                transform-origin: center center;
                 will-change: transform;
                 z-index: 0; 
             }
 
-            /* Mobilos beállítások */
-            @media screen and (max-width: 480px) {
-                #bg {
-                    /* Mobilon kikapcsoljuk az animációt */
-                    animation: none !important; 
-                    
-                    /* Mobilon is kényszerítjük a jobb szélt */
-                    background-position: 100% center !important;
-                }
-            }
-
             #overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: #000;
                 opacity: 0.4; 
                 z-index: 1;
             }
@@ -133,6 +147,7 @@
 
             button:hover {
                 background-color: rgba(255, 255, 255, 0.9);
+                transform: translateY(-2px);
             }
             
             button.success {
@@ -147,13 +162,26 @@
             }
 
             /* --- 4. TYPOGRAPHY --- */
-            h1 { font-size: 2.5em !important; margin-bottom: 0.2em !important; letter-spacing: 0.1em; position: relative; z-index: 10; }
-            h2 { font-size: 1.2em; margin-bottom: 1em; opacity: 0.8; font-weight: 300; position: relative; z-index: 10; }
-            p.info { font-size: 0.9em; opacity: 0.6; margin-bottom: 0.5em; position: relative; z-index: 10; }
+            h1 { font-size: 2.5em !important; margin-bottom: 0.2em !important; letter-spacing: 0.1em; position: relative; z-index: 10; color: #fff; }
+            h2 { font-size: 1.2em; margin-bottom: 1em; opacity: 0.8; font-weight: 300; position: relative; z-index: 10; color: #fff; }
+            p.info { font-size: 0.9em; opacity: 0.6; margin-bottom: 0.5em; position: relative; z-index: 10; color: #fff; }
 
+            /* Mobilos beállítások */
             @media screen and (max-width: 480px) {
+                #bg {
+                    animation: none !important; 
+                    background-position: center !important;
+                }
                 h1 { font-size: 1.8em !important; }
                 h2 { font-size: 1em; }
+            }
+
+            #footer {
+                position: relative;
+                z-index: 10;
+                margin-top: 2em;
+                color: rgba(255,255,255,0.5);
+                font-size: 0.8em;
             }
         </style>
     </head>
@@ -163,11 +191,9 @@
             <div id="overlay"></div>
             
             <div id="main">
-
                 <header id="header">
-                    
                     <span class="avatar">
-                        <img src="images/avatar.jpg" alt="" />
+                        <img src="images/avatar.jpg" alt="Avatar" />
                     </span>
 
                     <h1>Lelkes Barista</h1>
@@ -180,21 +206,19 @@
                     </form>
                     
                     <p id="my-form-status"></p>
-
                 </header>
 
                 <footer id="footer">
                     <span class="copyright">&copy; Lelkes Barista</span>
                 </footer>
-
             </div>
         </div>
         
         <script>
-            // Betöltő animáció
-            window.onload = function() { document.body.classList.remove('is-preload'); }
-            window.ontouchmove = function() { return false; }
-            window.onorientationchange = function() { document.body.scrollTop = 0; }
+            // Betöltő animáció kezelése
+            window.onload = function() { 
+                document.body.classList.remove('is-preload'); 
+            }
 
             // --- AJAX KÜLDÉS ---
             var form = document.getElementById("contact-form");
@@ -202,10 +226,8 @@
             
             async function handleSubmit(event) {
                 event.preventDefault(); 
-                
                 var data = new FormData(event.target);
                 
-                // Gomb átírása amíg tölt
                 button.innerHTML = "Küldés..."; 
                 
                 fetch(event.target.action, {
@@ -216,18 +238,12 @@
                     }
                 }).then(response => {
                     if (response.ok) {
-                        // SIKER!
                         button.innerHTML = "Köszönöm! Hamarosan keresem.";
                         button.classList.add("success"); 
                         form.reset(); 
                     } else {
-                        // HIBA!
                         response.json().then(data => {
-                            if (Object.hasOwn(data, 'errors')) {
-                                button.innerHTML = "Hiba: " + data["errors"].map(error => error["message"]).join(", ");
-                            } else {
-                                button.innerHTML = "Hiba történt a küldéskor.";
-                            }
+                            button.innerHTML = "Hiba történt.";
                             button.classList.add("error"); 
                         })
                     }
