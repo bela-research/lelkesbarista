@@ -8,15 +8,9 @@
         <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 
         <style>
-            /* Alapbeállítások, hogy ne legyen fehér villanás */
-            html, body {
-                height: 100%;
-                margin: 0;
-                padding: 0;
-                background-color: #000;
-            }
-
-            /* --- HÁTTÉR FIXÁLÁSA --- */
+            /* --- HÁTTÉR ÉS ANIMÁCIÓ FIXÁLÁSA --- */
+            
+            /* Ez a réteg felel a képért */
             #bg {
                 position: fixed;
                 top: 0;
@@ -27,12 +21,25 @@
                 background-size: cover;
                 background-position: center !important;
                 background-repeat: no-repeat;
-                z-index: -2; /* Minden mögé */
-                will-change: transform;
+                z-index: -2;
                 transform: scale(1);
+                will-change: transform;
             }
 
-            /* Animáció csak akkor, ha nincs betöltési fázis */
+            /* Ez a réteg hozza vissza a "kis csíkokat" (pattern) */
+            #overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                /* Az eredeti rácsháló effekt: */
+                background-image: url('assets/css/images/overlay.png'), url('assets/css/images/overlay.png');
+                background-color: rgba(0, 0, 0, 0.3);
+                z-index: -1;
+            }
+
+            /* Lebegő animáció - csak ha már betöltött */
             body:not(.is-preload) #bg {
                 animation: floatBackground 50s infinite ease-in-out;
             }
@@ -43,41 +50,27 @@
                 100% { transform: scale(1); }
             }
 
-            #overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.4);
-                z-index: -1; /* A kép fölé, de a tartalom alá */
-            }
-
-            /* --- TARTALOM --- */
+            /* --- EGYÉB STÍLUSOK (Hogy minden ott legyen, ahol kell) --- */
             #wrapper {
-                min-height: 100vh;
+                height: 100vh;
+                width: 100%;
                 display: flex;
-                align-items: center;
+                flex-direction: column;
                 justify-content: center;
+                align-items: center;
                 position: relative;
                 z-index: 1;
             }
 
-            #main {
-                text-align: center;
-                padding: 2em;
-                max-width: 100%;
-            }
-
-            /* --- AVATAR ÉS STÍLUSOK --- */
             .avatar {
                 display: block;
-                margin: 0 auto 2em auto;
+                margin: 0 auto 1.5em auto;
                 width: 150px;
                 height: 150px;
                 border-radius: 50%;
                 overflow: hidden;
                 border: 3px solid rgba(255, 255, 255, 0.5);
+                box-shadow: 0 0 20px rgba(0,0,0,0.5);
             }
 
             .avatar img {
@@ -86,40 +79,40 @@
                 object-fit: cover;
             }
 
-            h1 { color: #fff; font-size: 2.5em; margin: 0; }
-            h2 { color: rgba(255,255,255,0.8); font-weight: 300; }
+            h1 { font-size: 2.5em; color: #fff; margin: 0; letter-spacing: 2px; }
+            h2 { font-size: 1.2em; color: rgba(255,255,255,0.8); font-weight: 300; margin-top: 0.5em; }
 
-            /* --- FORM --- */
-            form {
-                margin-top: 2em;
-            }
-
+            form { margin-top: 2em; }
             input[type="email"] {
-                background: rgba(255, 255, 255, 0.1);
+                background: rgba(255, 255, 255, 0.15);
                 border: 1px solid rgba(255, 255, 255, 0.3);
-                border-radius: 30px;
+                border-radius: 40px;
                 color: #fff;
-                padding: 10px 20px;
-                width: 250px;
+                padding: 12px 25px;
+                width: 280px;
+                text-align: center;
                 outline: none;
+                transition: background 0.3s;
             }
+            input[type="email"]:focus { background: rgba(255, 255, 255, 0.25); }
 
             button {
                 background: #fff;
                 border: none;
-                border-radius: 30px;
-                padding: 10px 30px;
-                font-weight: bold;
+                border-radius: 40px;
+                padding: 12px 40px;
+                font-weight: 700;
+                margin-top: 15px;
                 cursor: pointer;
-                margin-top: 10px;
+                transition: transform 0.2s;
             }
+            button:hover { transform: scale(1.05); }
 
-            /* Mobilos fix: ne zoomoljon, ne másszon el */
+            /* Mobilos finomhangolás */
             @media screen and (max-width: 480px) {
-                #bg {
-                    animation: none !important;
-                    background-attachment: scroll !important;
-                }
+                #bg { animation: none !important; } /* Mobilon tiltsd le a zoomot, hogy ne legyen akadozás */
+                h1 { font-size: 1.8em; }
+                input[type="email"] { width: 220px; }
             }
         </style>
     </head>
@@ -130,45 +123,47 @@
             
             <div id="main">
                 <header id="header">
-                    <span class="avatar"><img src="images/avatar.jpg" alt="" /></span>
+                    <span class="avatar"><img src="images/avatar.jpg" alt="Barista" /></span>
                     <h1>Lelkes Barista</h1>
                     <h2>A tökéletes kávéélményhez vezető úton</h2>
-                    <p style="color: rgba(255,255,255,0.6);">Keress bizalommal</p>
+                    <p style="color: rgba(255,255,255,0.6); margin-top: 1em;">Keress bizalommal</p>
 
                     <form id="contact-form" action="https://formspree.io/f/xzdvwlwz" method="POST">
-                        <input type="email" name="email" placeholder="Email címed..." required>
+                        <input type="email" name="email" placeholder="Írd ide az email címed..." required>
                         <br>
                         <button id="submit-btn" type="submit">Küldés</button>
                     </form>
                 </header>
 
-                <footer id="footer" style="margin-top: 2em; color: rgba(255,255,255,0.4);">
+                <footer id="footer" style="margin-top: 3em; color: rgba(255,255,255,0.3); font-size: 0.8em;">
                     &copy; Lelkes Barista
                 </footer>
             </div>
         </div>
         
         <script>
-            // Amint betölt az oldal, levesszük a preloadot, így indul az animáció
+            // Betöltés után levevődik a preload osztály, elindul az animáció
             window.addEventListener('load', function() {
-                document.body.classList.remove('is-preload');
+                setTimeout(function() {
+                    document.body.classList.remove('is-preload');
+                }, 100);
             });
 
-            // Form küldés (eredeti scripted rövidítve a lényegre)
+            // Form kezelő
             var form = document.getElementById("contact-form");
-            form.addEventListener("submit", async function(event) {
+            form.addEventListener("submit", function(event) {
                 event.preventDefault();
                 var button = document.getElementById("submit-btn");
                 button.innerHTML = "Küldés...";
-                var data = new FormData(event.target);
+                
                 fetch(event.target.action, {
                     method: form.method,
-                    body: data,
+                    body: new FormData(event.target),
                     headers: { 'Accept': 'application/json' }
                 }).then(response => {
                     if (response.ok) {
                         button.innerHTML = "Köszönöm!";
-                        button.style.backgroundColor = "#4CAF50";
+                        button.style.background = "#4CAF50";
                         button.style.color = "#fff";
                         form.reset();
                     }
