@@ -38,31 +38,36 @@
             /* --- 2. HÁTTÉR ANIMÁCIÓ --- */
             @keyframes floatBackground {
                 0% { transform: scale(1); }
-                50% { transform: scale(1.05); } /* Kisebb zoom, hogy ne legyen szédítő */
+                50% { transform: scale(1.05); } 
                 100% { transform: scale(1); }
             }
 
             #bg {
                 background-image: url('assets/css/images/bg.jpg');
+                
+                /* Fontos: Kitölti a képernyőt */
                 background-size: cover;
                 
-                /* --- A JAVÍTÁS LÉNYEGE: 85% --- */
-                /* Ez tolja el erősen jobbra a képet, hogy a poharak látszódjanak */
-                background-position: 85% center !important;
+                /* --- A JAVÍTÁS: 100% JOBBRA --- */
+                /* Kivettem a 'fixed'-et, és 100%-ra (teljesen jobbra) toltam */
+                background-position: 100% center !important;
                 
-                background-attachment: fixed;
+                /* Ez a sor okozta a hibát mobilon, TÖRÖLTEM: */
+                /* background-attachment: fixed; */
+                
                 animation: floatBackground 60s infinite ease-in-out !important;
                 will-change: transform;
                 z-index: 0; 
             }
 
-            /* Mobilos finomhangolás */
+            /* Mobilos beállítások */
             @media screen and (max-width: 480px) {
                 #bg {
-                    /* Mobilon kikapcsoljuk az animációt a teljesítmény miatt */
+                    /* Mobilon kikapcsoljuk az animációt */
                     animation: none !important; 
-                    /* Ha mobilon még jobban jobbra kell tolni, írd át 90%-ra! */
-                    background-position: 85% center !important;
+                    
+                    /* Mobilon is kényszerítjük a jobb szélt */
+                    background-position: 100% center !important;
                 }
             }
 
@@ -78,7 +83,7 @@
                 flex-direction: column;
                 align-items: center;
                 gap: 10px;
-                position: relative; /* Fontos a kattinthatóság miatt */
+                position: relative; 
                 z-index: 10;
             }
             
@@ -165,7 +170,7 @@
                         <img src="images/avatar.jpg" alt="" />
                     </span>
 
-                    <h1>Lelkes Barista TESZTT</h1>
+                    <h1>Lelkes Barista</h1>
                     <h2>A tökéletes kávéélményhez vezető úton</h2>
                     <p class="info">Keress bizalommal</p>
 
@@ -236,4 +241,3 @@
         </script>
     </body>
 </html>
-
